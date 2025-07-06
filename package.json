@@ -1,0 +1,44 @@
+{
+  "name": "reality-check-suite",
+  "version": "0.1.0",
+  "description": "Social Media & AI Manipulation Detector - Browser Extension",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc && vite build",
+    "preview": "vite preview",
+    "test": "vitest",
+    "lint": "eslint . --ext .ts,.tsx",
+    "lint:fix": "eslint . --ext .ts,.tsx --fix"
+  },
+  "dependencies": {
+    "preact": "^10.19.3",
+    "@preact/signals": "^1.2.2",
+    "@xenova/transformers": "^2.8.0",
+    "idb": "^7.1.1",
+    "webextension-polyfill": "^0.10.0"
+  },
+  "devDependencies": {
+    "@types/chrome": "^0.0.253",
+    "@types/webextension-polyfill": "^0.10.6",
+    "@typescript-eslint/eslint-plugin": "^6.13.1",
+    "@typescript-eslint/parser": "^6.13.1",
+    "@vitejs/plugin-react": "^4.2.0",
+    "autoprefixer": "^10.4.16",
+    "eslint": "^8.54.0",
+    "postcss": "^8.4.32",
+    "tailwindcss": "^3.3.6",
+    "typescript": "^5.3.2",
+    "vite": "^5.0.5",
+    "vite-plugin-web-extension": "^4.1.1",
+    "vitest": "^1.0.1",
+    "playwright": "^1.40.0"
+  },
+  "keywords": ["browser-extension", "digital-wellbeing", "ai-safety", "social-media", "cognitive-distortion"],
+  "author": "Reality Check Suite Contributors",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/reality-check-suite/reality-check-suite"
+  }
+} 

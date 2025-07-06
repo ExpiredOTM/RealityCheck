@@ -1,0 +1,118 @@
+@import 'tailwindcss/base';
+@import 'tailwindcss/components';
+@import 'tailwindcss/utilities';
+
+/* Reality Check Widget Styles */
+#reality-check-widget {
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  font-size: 14px;
+  line-height: 1.4;
+}
+
+/* Ensure widget doesn't interfere with page styles */
+#reality-check-widget * {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+/* Animation overrides for smooth transitions */
+#reality-check-widget .animate-pulse {
+  animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+
+@keyframes pulse {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: .8;
+  }
+}
+
+/* Custom scrollbar for any scrollable areas */
+#reality-check-widget ::-webkit-scrollbar {
+  width: 4px;
+}
+
+#reality-check-widget ::-webkit-scrollbar-track {
+  background: #f1f1f1;
+  border-radius: 2px;
+}
+
+#reality-check-widget ::-webkit-scrollbar-thumb {
+  background: #c1c1c1;
+  border-radius: 2px;
+}
+
+#reality-check-widget ::-webkit-scrollbar-thumb:hover {
+  background: #a1a1a1;
+}
+
+/* Ensure buttons are clickable */
+#reality-check-widget button {
+  cursor: pointer;
+  user-select: none;
+}
+
+/* Focus styles for accessibility */
+#reality-check-widget button:focus {
+  outline: 2px solid #3b82f6;
+  outline-offset: 1px;
+}
+
+/* Component-specific styles */
+.reality-check-component-bar {
+  transition: all 0.3s ease;
+}
+
+.reality-check-trend-indicator {
+  transition: color 0.2s ease;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  #reality-check-widget .min-w-64 {
+    min-width: 240px;
+  }
+}
+
+/* Dark mode support */
+@media (prefers-color-scheme: dark) {
+  #reality-check-widget .bg-white {
+    background-color: #1f2937;
+    color: #f9fafb;
+  }
+  
+  #reality-check-widget .border-gray-200 {
+    border-color: #374151;
+  }
+  
+  #reality-check-widget .text-gray-700 {
+    color: #d1d5db;
+  }
+  
+  #reality-check-widget .text-gray-600 {
+    color: #9ca3af;
+  }
+  
+  #reality-check-widget .text-gray-500 {
+    color: #6b7280;
+  }
+  
+  #reality-check-widget .text-gray-400 {
+    color: #9ca3af;
+  }
+  
+  #reality-check-widget .bg-gray-100 {
+    background-color: #374151;
+  }
+  
+  #reality-check-widget .bg-gray-200 {
+    background-color: #4b5563;
+  }
+  
+  #reality-check-widget .hover\\:bg-gray-200:hover {
+    background-color: #6b7280;
+  }
+} 

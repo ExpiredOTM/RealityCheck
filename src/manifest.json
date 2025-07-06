@@ -1,0 +1,87 @@
+{
+  "manifest_version": 3,
+  "name": "Reality Check Suite",
+  "description": "Social Media & AI Manipulation Detector - Your digital wellbeing companion",
+  "version": "0.1.0",
+  "permissions": [
+    "activeTab",
+    "storage",
+    "scripting",
+    "tabs"
+  ],
+  "host_permissions": [
+    "https://chat.openai.com/*",
+    "https://claude.ai/*",
+    "https://gemini.google.com/*",
+    "https://twitter.com/*",
+    "https://x.com/*",
+    "https://reddit.com/*",
+    "https://www.reddit.com/*",
+    "https://facebook.com/*",
+    "https://www.facebook.com/*",
+    "https://youtube.com/*",
+    "https://www.youtube.com/*"
+  ],
+  "content_scripts": [
+    {
+      "matches": [
+        "https://chat.openai.com/*",
+        "https://claude.ai/*",
+        "https://gemini.google.com/*",
+        "https://twitter.com/*",
+        "https://x.com/*",
+        "https://reddit.com/*",
+        "https://www.reddit.com/*",
+        "https://facebook.com/*",
+        "https://www.facebook.com/*",
+        "https://youtube.com/*",
+        "https://www.youtube.com/*"
+      ],
+      "js": ["content/index.js"],
+      "css": ["content/styles.css"],
+      "run_at": "document_start"
+    }
+  ],
+  "background": {
+    "service_worker": "background/index.js"
+  },
+  "action": {
+    "default_popup": "popup/index.html",
+    "default_title": "Reality Check Suite",
+    "default_icon": {
+      "16": "icons/icon-16.png",
+      "32": "icons/icon-32.png",
+      "48": "icons/icon-48.png",
+      "128": "icons/icon-128.png"
+    }
+  },
+  "options_page": "options/index.html",
+  "icons": {
+    "16": "icons/icon-16.png",
+    "32": "icons/icon-32.png",
+    "48": "icons/icon-48.png",
+    "128": "icons/icon-128.png"
+  },
+  "web_accessible_resources": [
+    {
+      "resources": [
+        "widget/*",
+        "models/*",
+        "assets/*"
+      ],
+      "matches": [
+        "https://chat.openai.com/*",
+        "https://claude.ai/*",
+        "https://gemini.google.com/*",
+        "https://twitter.com/*",
+        "https://x.com/*",
+        "https://reddit.com/*",
+        "https://www.reddit.com/*",
+        "https://facebook.com/*",
+        "https://www.facebook.com/*",
+        "https://youtube.com/*",
+        "https://www.youtube.com/*"
+      ]
+    }
+  ]
+} 
