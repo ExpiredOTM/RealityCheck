@@ -6,6 +6,7 @@ export abstract class BaseDOMExtractor {
   protected extractedContent: Map<string, ExtractedContent> = new Map();
   protected lastExtractedTime: number = 0;
   protected isActive: boolean = false;
+  protected onContent: ((chunk: ExtractedContent) => void) | null = null;
 
   constructor(platform: Platform) {
     this.platform = platform;
@@ -14,10 +15,11 @@ export abstract class BaseDOMExtractor {
   /**
    * Start monitoring the DOM for content changes
    */
-  public start(): void {
+  public start(onContent?: (chunk: ExtractedContent) => void): void {
     if (this.isActive) return;
 
     this.isActive = true;
+    this.onContent = onContent || null;
     this.setupMutationObserver();
     this.performInitialExtraction();
   }
@@ -27,6 +29,7 @@ export abstract class BaseDOMExtractor {
    */
   public stop(): void {
     this.isActive = false;
+    this.onContent = null;
     if (this.mutationObserver) {
       this.mutationObserver.disconnect();
       this.mutationObserver = null;
@@ -132,6 +135,9 @@ export abstract class BaseDOMExtractor {
         const content = this.extractContentFromElement(element);
         if (content && this.isValidContent(content)) {
           this.extractedContent.set(content.id, content);
+          if (this.onContent) {
+            this.onContent(content);
+          }
         }
       });
     }
