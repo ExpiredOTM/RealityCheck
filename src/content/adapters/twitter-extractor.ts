@@ -1,9 +1,16 @@
 import { BaseDOMExtractor } from './base-extractor.js';
 import { ExtractedContent, Platform, ContentType } from '../../types/index.js';
+import { SiteAdapter } from '../adapters/site-adapter.js';
 
-export class TwitterExtractor extends BaseDOMExtractor {
+export class TwitterExtractor extends BaseDOMExtractor implements SiteAdapter {
+  readonly name = Platform.TWITTER;
+
   constructor() {
     super(Platform.TWITTER);
+  }
+
+  isMatch(url: URL): boolean {
+    return url.hostname.includes('twitter.com') || url.hostname.includes('x.com');
   }
 
   protected getContentSelectors(): string[] {

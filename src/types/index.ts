@@ -162,7 +162,7 @@ export interface InterventionEvent {
   type: InterventionType;
   timestamp: number;
   viAtTrigger: number;
-  userResponse: 'dismissed' | 'accepted' | 'ignored';
+  userResponse: 'dismissed' | 'accepted' | 'ignored' | 'pending';
   responseTime?: number;
 }
 

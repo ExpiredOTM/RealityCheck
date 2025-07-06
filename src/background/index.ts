@@ -86,7 +86,7 @@ class RealityCheckBackground {
       sendResponse({ success: true });
     } catch (error) {
       console.error('[Reality Check] Error handling message:', error);
-      sendResponse({ success: false, error: error.message });
+      sendResponse({ success: false, error: (error as Error).message });
     }
   }
 
@@ -133,7 +133,7 @@ class RealityCheckBackground {
     const session = this.sessions.get(tabId);
     if (session) {
       session.endTime = data.timestamp;
-      session.totalTimeMs = session.endTime - session.startTime;
+      session.totalTimeMs = session.endTime! - session.startTime;
       
       // Calculate statistics
       if (session.viHistory.length > 0) {

@@ -1,9 +1,16 @@
 import { BaseDOMExtractor } from './base-extractor.js';
 import { ExtractedContent, Platform, ContentType } from '../../types/index.js';
+import { SiteAdapter } from '../adapters/site-adapter.js';
 
-export class ChatGPTExtractor extends BaseDOMExtractor {
+export class ChatGPTExtractor extends BaseDOMExtractor implements SiteAdapter {
+  readonly name = Platform.CHATGPT;
+
   constructor() {
     super(Platform.CHATGPT);
+  }
+
+  isMatch(url: URL): boolean {
+    return url.hostname.includes('chat.openai.com');
   }
 
   protected getContentSelectors(): string[] {
@@ -177,8 +184,7 @@ export class ChatGPTExtractor extends BaseDOMExtractor {
     const walker = document.createTreeWalker(
       element,
       NodeFilter.SHOW_TEXT | NodeFilter.SHOW_ELEMENT,
-      null,
-      false
+      null
     );
 
     let node = walker.nextNode();

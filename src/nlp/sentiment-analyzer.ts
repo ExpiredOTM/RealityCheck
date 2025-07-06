@@ -1,8 +1,8 @@
-import { pipeline, Pipeline } from '@xenova/transformers';
+import { pipeline } from '@xenova/transformers';
 import { SentimentAnalysis } from '../types/index.js';
 
 export class SentimentAnalyzer {
-  private pipeline: Pipeline | null = null;
+  private pipeline: any | null = null;
   private isLoading: boolean = false;
   private isReady: boolean = false;
 

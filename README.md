@@ -21,7 +21,7 @@ An open-source browser extension that helps individuals recognize and mitigate a
 ### 🛡️ Supported Platforms
 - **AI Chats**: ChatGPT, Claude, Gemini
 - **Social Media**: Twitter/X, Reddit, Facebook, YouTube
-- **Extensible**: Easy to add new platform extractors
+- **Extensible**: Easy to add new site adapters
 
 ### 🎨 User Interface
 - **Traffic Light Widget**: Minimalist VI indicator with expandable details
@@ -93,8 +93,8 @@ npm run build
 
 ### Core Components
 
-#### 🔍 **Content Extractors** (`src/content/extractors/`)
-Platform-specific DOM monitors that extract text content and metadata:
+#### 🔍 **Site Adapters** (`src/content/adapters/`)
+Platform-specific DOM monitors that implement a common interface:
 - `ChatGPTExtractor`: Handles OpenAI chat interface
 - `TwitterExtractor`: Processes tweets, replies, and social interactions
 - `BaseDOMExtractor`: Abstract base class for consistent extraction patterns
@@ -156,7 +156,7 @@ The VI combines six key components:
 
 ### Customization
 - **Intervention Rules**: Modify thresholds and trigger conditions
-- **Platform Support**: Add new extractors for additional websites
+ - **Platform Support**: Add new adapters for additional websites
 - **UI Themes**: Customize colors and positioning
 - **Privacy Controls**: Configure data retention and sharing preferences
 
@@ -209,7 +209,7 @@ We welcome contributions! Please see our [Contributing Guide](CONTRIBUTING.md) f
 ## 🗺️ Roadmap
 
 ### v0.2 - Multi-Platform Social Feed (4 weeks)
-- Reddit and Facebook extractors
+- Reddit and Facebook adapters
 - Enhanced rage-scroll heuristics
 - Cross-platform correlation
 

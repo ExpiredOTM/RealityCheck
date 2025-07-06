@@ -1,21 +1,31 @@
-import { BaseDOMExtractor } from './extractors/base-extractor.js';
-import { ChatGPTExtractor } from './extractors/chatgpt-extractor.js';
-import { TwitterExtractor } from './extractors/twitter-extractor.js';
+import { BaseDOMExtractor } from './adapters/base-extractor.js';
+import { SiteAdapter } from './adapters/site-adapter.js';
+import { findAdapter } from './adapters/index.js';
 import { ScrollProfiler } from './profilers/scroll-profiler.js';
 import { Platform, ExtensionMessage, MessageType } from '../types/index.js';
 
 class RealityCheckContentScript {
+  private adapter: SiteAdapter | null = null;
   private extractor: BaseDOMExtractor | null = null;
   private scrollProfiler: ScrollProfiler;
-  private platform: Platform;
+  private settings: { enabledPlatforms: Platform[] } = { enabledPlatforms: [] };
+  private platform!: Platform;
   private isActive: boolean = false;
   private processingInterval: number | null = null;
   private cleanupInterval: number | null = null;
 
   constructor() {
-    this.platform = this.detectPlatform();
+    this.initializeAdapter();
     this.scrollProfiler = new ScrollProfiler();
-    this.initializeExtractor();
+  }
+
+  private async loadSettings(): Promise<void> {
+    const data = await chrome.storage.local.get(['settings']);
+    if (data.settings && Array.isArray(data.settings.enabledPlatforms)) {
+      this.settings.enabledPlatforms = data.settings.enabledPlatforms as Platform[];
+    } else {
+      this.settings.enabledPlatforms = Object.values(Platform);
+    }
   }
 
   /**
@@ -23,6 +33,8 @@ class RealityCheckContentScript {
    */
   public async initialize(): Promise<void> {
     try {
+      this.initializeAdapter();
+      await this.loadSettings();
       console.log(`[Reality Check] Initializing for platform: ${this.platform}`);
       
       // Check if platform is supported
@@ -31,8 +43,12 @@ class RealityCheckContentScript {
         return;
       }
 
-      // Start monitoring components
-      this.startMonitoring();
+      // Start monitoring components if enabled
+      if (this.settings.enabledPlatforms.includes(this.platform)) {
+        this.startMonitoring();
+      } else {
+        console.log('[Reality Check] Platform disabled in settings');
+      }
       
       // Set up message processing
       this.setupMessageProcessing();
@@ -54,9 +70,12 @@ class RealityCheckContentScript {
 
     this.isActive = true;
     
-    // Start DOM extraction
-    if (this.extractor) {
-      this.extractor.start();
+    // Start DOM extraction via adapter
+    if (this.adapter) {
+      this.adapter.start();
+      if (this.adapter instanceof BaseDOMExtractor) {
+        this.extractor = this.adapter;
+      }
     }
     
     // Start scroll profiling
@@ -67,8 +86,7 @@ class RealityCheckContentScript {
       type: MessageType.SESSION_STARTED,
       data: {
         platform: this.platform,
-        url: window.location.href,
-        timestamp: Date.now()
+        url: window.location.href
       }
     });
   }
@@ -82,8 +100,8 @@ class RealityCheckContentScript {
     this.isActive = false;
     
     // Stop DOM extraction
-    if (this.extractor) {
-      this.extractor.stop();
+    if (this.adapter) {
+      this.adapter.stop();
     }
     
     // Stop scroll profiling
@@ -105,8 +123,7 @@ class RealityCheckContentScript {
       type: MessageType.SESSION_ENDED,
       data: {
         platform: this.platform,
-        url: window.location.href,
-        timestamp: Date.now()
+        url: window.location.href
       }
     });
   }
@@ -153,8 +170,7 @@ class RealityCheckContentScript {
             content: newContent,
             scrollState,
             scrollMetrics: recentScrollMetrics,
-            platform: this.platform,
-            timestamp: Date.now()
+            platform: this.platform
           }
         });
       }
@@ -168,8 +184,7 @@ class RealityCheckContentScript {
           data: {
             rageScrolling: true,
             intensity,
-            scrollState,
-            timestamp: Date.now()
+            scrollState
           }
         });
       }
@@ -199,7 +214,7 @@ class RealityCheckContentScript {
   /**
    * Send message to background script
    */
-  private sendMessage(message: Omit<ExtensionMessage, 'source'>): void {
+  private sendMessage(message: Omit<ExtensionMessage, 'source' | 'timestamp'>): void {
     const fullMessage: ExtensionMessage = {
       ...message,
       source: 'content',
@@ -215,82 +230,18 @@ class RealityCheckContentScript {
   /**
    * Detect current platform
    */
-  private detectPlatform(): Platform {
-    const hostname = window.location.hostname.toLowerCase();
-    
-    if (hostname.includes('chat.openai.com')) {
-      return Platform.CHATGPT;
-    }
-    
-    if (hostname.includes('claude.ai')) {
-      return Platform.CLAUDE;
-    }
-    
-    if (hostname.includes('gemini.google.com')) {
-      return Platform.GEMINI;
-    }
-    
-    if (hostname.includes('twitter.com') || hostname.includes('x.com')) {
-      return Platform.TWITTER;
-    }
-    
-    if (hostname.includes('reddit.com')) {
-      return Platform.REDDIT;
-    }
-    
-    if (hostname.includes('facebook.com')) {
-      return Platform.FACEBOOK;
-    }
-    
-    if (hostname.includes('youtube.com')) {
-      return Platform.YOUTUBE;
-    }
-    
-    return Platform.UNKNOWN;
+  private initializeAdapter(): void {
+    const adapter = findAdapter(new URL(window.location.href));
+    this.adapter = adapter;
+    this.extractor = adapter instanceof BaseDOMExtractor ? adapter : null;
+    this.platform = adapter ? adapter.name : Platform.UNKNOWN;
   }
 
   /**
    * Initialize the appropriate extractor for the current platform
    */
   private initializeExtractor(): void {
-    switch (this.platform) {
-      case Platform.CHATGPT:
-        this.extractor = new ChatGPTExtractor();
-        break;
-      
-      case Platform.TWITTER:
-        this.extractor = new TwitterExtractor();
-        break;
-      
-      case Platform.CLAUDE:
-        // TODO: Implement Claude extractor
-        console.log('[Reality Check] Claude extractor not yet implemented');
-        break;
-        
-      case Platform.GEMINI:
-        // TODO: Implement Gemini extractor
-        console.log('[Reality Check] Gemini extractor not yet implemented');
-        break;
-        
-      case Platform.REDDIT:
-        // TODO: Implement Reddit extractor
-        console.log('[Reality Check] Reddit extractor not yet implemented');
-        break;
-        
-      case Platform.FACEBOOK:
-        // TODO: Implement Facebook extractor
-        console.log('[Reality Check] Facebook extractor not yet implemented');
-        break;
-        
-      case Platform.YOUTUBE:
-        // TODO: Implement YouTube extractor
-        console.log('[Reality Check] YouTube extractor not yet implemented');
-        break;
-        
-      default:
-        console.log(`[Reality Check] No extractor available for platform: ${this.platform}`);
-        break;
-    }
+    this.initializeAdapter();
   }
 }
 
@@ -319,6 +270,12 @@ const urlCheckInterval = setInterval(() => {
 // Cleanup on page unload
 window.addEventListener('beforeunload', () => {
   clearInterval(urlCheckInterval);
+});
+
+chrome.storage.onChanged.addListener((changes, area) => {
+  if (area === 'local' && changes.settings) {
+    contentScript.initialize();
+  }
 });
 
 // Handle visibility changes
